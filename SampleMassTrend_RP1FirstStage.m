@@ -65,7 +65,7 @@ disp("Minimum Storable 2nd Stage Gross Mass (kg): " + min_Storable + ". Occuring
 figure
 hold on 
 grid on
-title("Mass Trends: RP1 First Stage")
+title("Mass Trends: Vehicle Gross Mass with RP1 First Stage")
 xlabel("First Stage DV Fraction")
 ylabel("Gross Vehicle Mass (kg)")
 plot(RP1_First_CH4_Second_results(:,6),RP1_First_CH4_Second_results(:,5))
@@ -75,8 +75,31 @@ plot(RP1_First_Solid_Second_results(:,6),RP1_First_Solid_Second_results(:,5))
 plot(RP1_First_Storable_Second_results(:,6),RP1_First_Storable_Second_results(:,5))
 legend("LCH4 Second Stage","LH2 Second Stage","RP1 Second Stage","Solid Second Stage","Storable Second Stage")
 
+figure
+hold on 
+grid on
+title("Mass Trends: First Stage Gross Mass with RP1 First Stage")
+xlabel("First Stage DV Fraction")
+ylabel("Gross First Stage Mass (kg)")
+plot(RP1_First_CH4_Second_results(:,6),RP1_First_CH4_Second_results(:,1))
+plot(RP1_First_H2_Second_results(:,6),RP1_First_H2_Second_results(:,1))
+plot(RP1_First_RP1_Second_results(:,6),RP1_First_RP1_Second_results(:,1))
+plot(RP1_First_Solid_Second_results(:,6),RP1_First_Solid_Second_results(:,1))
+plot(RP1_First_Storable_Second_results(:,6),RP1_First_Storable_Second_results(:,1))
+legend("LCH4 Second Stage","LH2 Second Stage","RP1 Second Stage","Solid Second Stage","Storable Second Stage")
 
-
+figure
+hold on 
+grid on
+title("Mass Trends: Second Stage Gross Mass with RP1 First Stage")
+xlabel("First Stage DV Fraction")
+ylabel("Gross Second Stage Mass (kg)")
+plot(RP1_First_CH4_Second_results(:,6),RP1_First_CH4_Second_results(:,2))
+plot(RP1_First_H2_Second_results(:,6),RP1_First_H2_Second_results(:,2))
+plot(RP1_First_RP1_Second_results(:,6),RP1_First_RP1_Second_results(:,2))
+plot(RP1_First_Solid_Second_results(:,6),RP1_First_Solid_Second_results(:,2))
+plot(RP1_First_Storable_Second_results(:,6),RP1_First_Storable_Second_results(:,2))
+legend("LCH4 Second Stage","LH2 Second Stage","RP1 Second Stage","Solid Second Stage","Storable Second Stage")
 
 
 
