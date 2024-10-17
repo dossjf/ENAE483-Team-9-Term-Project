@@ -24,7 +24,7 @@ clc; close all; clear
                   10.1     4.2     6.77    5       14.7; % Chamber Pressure 2nd Stage (MPa)
                   34.34    78      37      16      26.2; % Nozzle area ratio sea-level 1st Stage
                   45       84      14.5    56      81.3]; % Nozzle area ratio sea-level 2nd Stage
-    N = 100; %Total number of steps in X.
+    N = 300; %Total number of steps in X.
     X_vals = linspace(0,1,N); %First Stage DV Ratio to be plotted. Not all values of X will generate a solution capable of reaching orbit in which case the results array will hold NaN
     RP1_First_CH4_Second_results = NaN(length(X_vals),8);
     RP1_First_H2_Second_results = NaN(length(X_vals),8);
@@ -230,8 +230,8 @@ function [stageOneTotalCost, stageTwoTotalCost, combinedTotalCost] = apply_SLVCM
     p = log(learningCurve)/log(2); %Find p value for the given learning curve.
     StageNR_A = 12.73; %Non recurring coefficients for costing a launch vehicle stage.
     StageNR_B = 0.55;
-    NRE_1 = Dollars2023to2024(StageNR_A*m_in1^StageNR_B); %Calculate non-recurring costs. Notably this only works with inert stage masses in KILOGRAMS!
-    NRE_2 = Dollars2023to2024(StageNR_A*m_in2^StageNR_B);
+    NRE_1 = StageNR_A*m_in1^StageNR_B; %Calculate non-recurring costs. Notably this only works with inert stage masses in KILOGRAMS!
+    NRE_2 = StageNR_A*m_in2^StageNR_B;
     Stage_A = 0.3024; %First unit costs of each stage.
     Stage_B = 0.662;
     Stage_1_Unit1 = Stage_A*m_in1^Stage_B; %C_1 of stage one and two.
