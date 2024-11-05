@@ -152,6 +152,7 @@ minimized_mass_subsystem_table_stage2 = zeros(5, 5, 13);
 
 D_list = 5.2:0.1:10;
 
+final_results = zeros(5,5);
 for ind2 = 1:5
     for ind1 = 1:5
         % Initialization of useful parameters
@@ -173,18 +174,15 @@ for ind2 = 1:5
         optimized_eval_values_stage2 = NaN(length(D_list),13);
 
         i = 1;
+        optimized_eval_values_diameter_set = zeros(length(D_list),30);
         for D=D_list % for loop to iterate through different L and D values
             % Radius
             r = D/2;
-    
-            % All fairing heights are 1.5*D to include the two bulkheads and some
-            % more
 
             [L] = calc_L(mpr1_ox, mpr2_ox, mpr1_fuel, mpr2_fuel, ind1, ind2, r, prop_matrix);
             % L = [L_ox1, L_ox2, L_fuel1, L_fuel2, L_entire_tanks]
             % L_entire_tanks = L_ox1 + L_ox2 + L_fuel1 + L_fuel2 + 4*D
            
-
             minimized_mass_subsystem_table_stage1(ind2,ind1,3) = calc_m_insul_pr(prop_matrix, L(1), L(3), ind1, r); % tank 1 insulation mass 
             minimized_mass_subsystem_table_stage2(ind2,ind1,3) = calc_m_insul_pr(prop_matrix, L(2), L(4), ind2, r); % tank 2 insulation mass
             
@@ -218,17 +216,34 @@ for ind2 = 1:5
             minimized_mass_subsystem_table_stage1(ind2,ind1,13) = m_fairing_array(5); % aft fairing mass
             minimized_mass_subsystem_table_stage2(ind2,ind1,13) = 0; % aft fairing considered as stage 1
             
+            optimized_eval_values = zeros(length(D_list),29);
             if ~any(isnan(L), 'all') % Only evaluates if all L values are mathematically possible solutions
                 if (L(5) + h_fairing_total)/D <= 12 % Checks if L/D meets specs 
-                    disp(prop_names(ind1) + " + " + prop_names(ind2));
-                    disp("Total Height: " + L(5) + h_fairing_total + " | L/D: " + (L(5) + h_fairing_total)/D)
-                    optimized_eval_values_stage1(i, :) = minimized_mass_subsystem_table_stage1(ind2,ind1,1:13);
-                    optimized_eval_values_stage2(i, :) = minimized_mass_subsystem_table_stage2(ind2,ind1,1:13);
+                    %disp(prop_names(ind1) + " + " + prop_names(ind2));
+                    %disp("Total Height: " + L(5) + h_fairing_total + " | L/D: " + (L(5) + h_fairing_total)/D)         
+                    stage1 = reshape(minimized_mass_subsystem_table_stage1(ind2,ind1,1:13), 1, 13);
+                    stage2 = reshape(minimized_mass_subsystem_table_stage2(ind2,ind1,1:13), 1, 13);
+                    optimized_eval_values(i, :) = [sum(minimized_mass_subsystem_table_stage1(ind2,ind1,1:13)) + sum(minimized_mass_subsystem_table_stage2(ind2,ind1,1:13)), (L(5) + h_fairing_total)/D, (L(5) + h_fairing_total), stage1, stage2];
+                    test = 1;
+                    % disp(optimized_eval_values(i, :))
+                    % [new total inert mass of all subsystems, L/D ratio, total height, stage 1 subsystem mass results(13 long), stage2 subsystem mass results(13 long)]
                 end
             end
+            disp("test1")
+            min1 = m1 - mpr1;
+            min2 = m2 - mpr2;
+            disp(optimized_eval_values(i, :))
+            %disp(optimized_eval_values(1,1));
+            [max_total_inert_mass, max_index] = max(optimized_eval_values(:,1));
+            max_inert_mass_margin = ((max_total_inert_mass/(min1 + min2)) - 1)*100;
+            optimized_eval_values_diameter_set(i, :) = [max_inert_mass_margin, optimized_eval_values(max_index,1:29)];
             i = i + 1;
         end
-        % disp(optimized_eval_values_stage1)
+        min1 = m1 - mpr1;
+        min2 = m2 - mpr2;
+        [max_total_inert_mass, max_index] = max(optimized_eval_values_diameter_set(:,1));
+        max_inert_mass_margin = ((max_total_inert_mass/(min1 + min2)) - 1)*100;
+        final_results(ind2,ind1) = max_inert_mass_margin;
     end
 end
 
@@ -286,7 +301,6 @@ function L = calc_L(mpr1_ox, mpr2_ox, mpr1_fuel, mpr2_fuel, ind1, ind2, r, prop_
         L_fuel2 = NaN;
     else
         L_fuel2 = (Vpr2_fuel - (4/3)*pi*r^3)/(pi*r^2);
-
     end
     L_entire_tanks = L_ox1 + L_ox2 + L_fuel1 + L_fuel2 + 4*D;
     L = [L_ox1, L_ox2, L_fuel1, L_fuel2, L_entire_tanks];
